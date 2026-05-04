@@ -122,7 +122,7 @@ func (api *IngestAPI) ingestToProject(p *model.Project, ir *IngestRequest, ctx e
 
 	h.Buckets = make(model.BucketList, len(ir.Histogram))
 	for i := range ir.Histogram {
-		h.Buckets[i] = &ir.Histogram[0]
+		h.Buckets[i] = &ir.Histogram[i]
 	}
 
 	if err := api.DB.CreateHistogram(h); err != nil {
@@ -131,18 +131,16 @@ func (api *IngestAPI) ingestToProject(p *model.Project, ir *IngestRequest, ctx e
 
 	// Details
 
-	var det model.Detail
 	details := make([]*model.Detail, len(ir.Details))
 	for i, v := range ir.Details {
-		det.ReportID = report.ID
-		det.ResultDetail = v
+		det := model.Detail{ReportID: report.ID, ResultDetail: v}
 		details[i] = &det
 	}
 
 	created, errored := api.DB.CreateDetailsBatch(report.ID, details)
 
 	// Update project status if needed
-	if latest == nil || report.Date.Before(latest.Date) {
+	if latest == nil || report.Date.After(latest.Date) {
 		if err := api.DB.UpdateProjectStatus(p.ID, report.Status); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
@@ -163,7 +161,7 @@ func (api *IngestAPI) ingestToProject(p *model.Project, ir *IngestRequest, ctx e
 		},
 	}
 
-	return ctx.JSON(http.StatusOK, rres)
+	return ctx.JSON(http.StatusCreated, rres)
 }
 
 func convertIngestToReport(pid uint, ir *IngestRequest) *model.Report {
