@@ -431,7 +431,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 
 					wrk := wrk
 					if wrk.active {
-						wrk.active = false
+						wrk.Stop()
 						wdc++
 					}
 				}
@@ -473,11 +473,11 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 			}
 
 			if wait > 0 {
-				time.Sleep(wait / 2)
+				time.Sleep(wait)
 			}
 
 			select {
-			case ticks <- TickValue{instant: time.Now(), reqNumber: counter.Inc()}:
+			case ticks <- TickValue{instant: time.Now(), reqNumber: counter.Inc() - 1}:
 				continue
 			case <-b.stopCh:
 				if b.config.hasLog {
